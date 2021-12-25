@@ -22,13 +22,21 @@ test: test.out
 	gcov -mr ../*.hpp
 
 # Link objects together. The to-be-tested is compiled from root and placed here
-test.out: $(OBJECTS) test_main.o
-	g++ -g --coverage $^ -o $@
+# The -L flag tells g++ where to look for libraries.
+# THe -ltestdata tells g++ to link against libtestdata.a
+test.out: $(OBJECTS) test_main.o libtestdata.a
+	g++ -L . -g --coverage $^ -o $@ -ltestdata
 
 # Separate rule for test_main. If file in root directory was changed, recompile
 # tests except main.
 test_main.o: .test_main.cpp
 	g++ -g --coverage -c $^ -o $@
+
+# Create a static library. The source file is gitignored. As an exercise for the
+# reader, try recreating the source file.
+libtestdata.a: .testdata.cpp
+	g++ -c $< -o .testdata.o
+	ar -crs $@ .testdata.o
 
 clean:
 	rm *.o & rm *.out & rm *.gc* & rm coverage/*.html

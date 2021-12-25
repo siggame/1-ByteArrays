@@ -10,3 +10,6 @@ coverage
 *.gcda
 *.gcno
 *.gcov
+
+# Secret sources
+.testdata.cpp
